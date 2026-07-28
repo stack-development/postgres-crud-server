@@ -1,0 +1,31 @@
+version: '3.8'
+
+services:
+  crud-api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: items-api-server
+    ports:
+      - "5027:8080"
+    environment:
+      - ConnectionStrings__DefaultConnection=Server=crud-db;Port=5432;Database=items_db;User Id=postgres;Password=mysecretpassword;Include Error Detail=true
+      - AUTO_MIGRATE=true
+      - ASPNETCORE_ENVIRONMENT=Development
+
+    depends_on:
+      - crud-db
+
+  crud-db:
+    image: postgres:latest
+    container_name: crud-postgres
+    environment:
+      POSTGRES_PASSWORD: mysecretpassword
+      POSTGRES_DB: items_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_crud_data:/var/lib/postgresql/data
+
+volumes:
+  postgres_crud_data:
